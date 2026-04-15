@@ -1,0 +1,27 @@
+module:
+  name: tauri_window_config
+  language: json
+  path: src-tauri/tauri.conf.json
+  version: 1.0.1
+  description: Tauri main window configuration for the desktop UI container.
+functions: []
+classes: []
+data_structures:
+  - name: main_window
+    description: Main application window sizing and behavior properties.
+    fields:
+      label:
+        type: string
+      width:
+        type: number
+      height:
+        type: number
+      minWidth:
+        type: number
+      minHeight:
+        type: number
+      resizable:
+        type: boolean
+      decorations:
+        type: boolean
+dependencies: []

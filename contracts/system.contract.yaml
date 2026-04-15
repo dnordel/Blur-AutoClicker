@@ -1,0 +1,4 @@
+modules:
+  tauri_window_config:
+    path: src-tauri/tauri.conf.json
+    depends_on: []
