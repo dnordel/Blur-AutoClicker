@@ -7,6 +7,8 @@ import {
   handleVerticalWheel,
   shouldHandleHorizontalWheel,
 } from "../src/scroll/scrollBehavior";
+import { routeHorizontalWheel, routeVerticalWheel } from "../src/scroll/scrollRouting";
+import { getScrollOwnerDebugAttributes } from "../src/scroll/scrollOwnershipDebug";
 
 function createScrollable({
   clientWidth = 100,
@@ -127,6 +129,52 @@ describe("frontend scroll layout contract", () => {
 
     expect(consumed).toBe(true);
     expect(advancedColumn.scrollTop).toBe(90);
+  });
+
+  it("routes vertical wheel via shared router", () => {
+    const column = createScrollable({ clientHeight: 140, scrollHeight: 420 });
+    const { event } = createWheelEvent(column, 0, 45);
+
+    const consumed = routeVerticalWheel(event as never, "advanced-col-left");
+
+    expect(consumed).toBe(true);
+    expect(column.scrollTop).toBe(45);
+  });
+
+  it("routes horizontal wheel via shared router with nested guard", () => {
+    const container = createScrollable({ clientWidth: 200, scrollWidth: 700 });
+    const nested = createScrollable({ clientHeight: 100, scrollHeight: 500, scrollTop: 80 });
+    nested.style.overflowY = "auto";
+    container.appendChild(nested);
+    const nestedWheel = createWheelEvent(nested, 0, 30);
+
+    const nestedConsumed = routeHorizontalWheel(
+      nestedWheel.event as never,
+      container,
+      "advanced-columns",
+    );
+
+    const parentWheel = createWheelEvent(container, 0, 60);
+    const parentConsumed = routeHorizontalWheel(
+      parentWheel.event as never,
+      container,
+      "advanced-columns",
+    );
+
+    expect(nestedConsumed).toBe(false);
+    expect(parentConsumed).toBe(true);
+    expect(container.scrollLeft).toBe(60);
+  });
+
+  it("exposes scroll owner debug attributes in development", () => {
+    const attrs = getScrollOwnerDebugAttributes("settings-panel");
+
+    if (import.meta.env.DEV) {
+      expect(attrs).toEqual({ "data-scroll-owner": "settings-panel" });
+      return;
+    }
+
+    expect(attrs).toBeUndefined();
   });
 
   it("supports scrollbar drag interaction in each scrollable container", () => {

@@ -2,8 +2,8 @@ module:
   name: frontend_scroll_layout
   language: typescript
   path: src/scroll/scrollBehavior.ts
-  version: 1.2.0
-  description: Shared scroll behavior contract for settings and advanced panel containers, including wheel routing, nested scroll guard checks, boundary clamping, and parent handoff.
+  version: 1.3.0
+  description: Shared primitive scroll behavior contract for panel containers, including overflow checks, boundary clamping, and wheel consumption helpers.
 functions:
   - name: canScrollInDirection
     description: Returns whether the container can scroll further in the wheel direction for the given axis.
@@ -126,6 +126,5 @@ data_structures:
       boundary_clamp_and_parent_handoff:
         type: implemented
 dependencies:
-  - src/components/panels/SettingsPanel.tsx
-  - src/components/panels/AdvancedPanelLayout.tsx
+  - src/scroll/scrollRouting.ts
   - tests/frontend-scroll-layout.test.ts

@@ -6,8 +6,11 @@
 - Enabled runtime resizing for the main Tauri window and defined minimum size constraints to prevent clipping on high DPI setups.
 - Added GUI-selectable scroll actions (Scroll Up / Scroll Down) alongside click actions in simple and advanced panels.
 - Enabled stable bidirectional scrolling in panel containers with horizontal advanced-column scrolling and vertical column scrolling.
+- Enforced a single scroll owner per panel mode: `.settings-panel` owns Settings vertical scroll, while Advanced mode uses `.advanced-columns` for horizontal wheel routing and `.advanced-col` containers for vertical overflow.
+- Added development-only scroll ownership debug attributes and guarded wheel-routing logs to verify which container consumes wheel input.
 
 ## Next
 - Add an in-app setting to persist preferred window dimensions per panel.
 - Add automated UI verification for 100%/150%/200% Windows scale factors.
 - Add per-action tuning for scroll notch multiplier and independent scroll delay behavior.
+- Add an optional in-app toggle for scroll debug logging (`window.__BLUR_SCROLL_DEBUG__`) so QA can verify scroll-owner routing without devtools snippets.
