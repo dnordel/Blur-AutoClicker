@@ -2,8 +2,8 @@ module:
   name: frontend_scroll_layout
   language: typescript
   path: src/scroll/scrollBehavior.ts
-  version: 1.1.0
-  description: Shared scroll behavior contract for settings and advanced panel containers, including wheel routing, boundary clamping, and parent handoff.
+  version: 1.2.0
+  description: Shared scroll behavior contract for settings and advanced panel containers, including wheel routing, nested scroll guard checks, boundary clamping, and parent handoff.
 functions:
   - name: canScrollInDirection
     description: Returns whether the container can scroll further in the wheel direction for the given axis.
@@ -56,6 +56,34 @@ functions:
       type: boolean
     exceptions: []
     side_effects: mutates scrollTop or scrollLeft
+  - name: shouldHandleHorizontalWheel
+    description: Returns true only when the horizontal container has overflow, receives vertical wheel delta, and no nested vertically-scrollable ancestor can consume the movement.
+    locked: false
+    inputs:
+      container:
+        type: 'HTMLElement | null'
+        required: true
+      event:
+        type: 'Pick<WheelEvent<HTMLElement>, "target" | "deltaY">'
+        required: true
+    returns:
+      type: boolean
+    exceptions: []
+    side_effects: none
+  - name: applyHorizontalScroll
+    description: Applies deltaY as horizontal scrollLeft movement to the advanced columns container.
+    locked: false
+    inputs:
+      container:
+        type: 'HTMLElement | null'
+        required: true
+      deltaY:
+        type: number
+        required: true
+    returns:
+      type: boolean
+    exceptions: []
+    side_effects: mutates scrollLeft
   - name: handleVerticalWheel
     description: Consumes vertical wheel events for child containers only when the container can move; otherwise allows parent handoff.
     locked: false
@@ -86,6 +114,10 @@ data_structures:
       settings_panel_vertical_wheel:
         type: implemented
       advanced_panel_horizontal_wheel_to_horizontal:
+        type: implemented
+      advanced_panel_horizontal_wheel_overflow_gated:
+        type: implemented
+      advanced_panel_nested_vertical_scroll_guard:
         type: implemented
       advanced_column_vertical_wheel:
         type: implemented

@@ -2,6 +2,8 @@ import type { WheelEvent } from "react";
 
 export type ScrollAxis = "vertical" | "horizontal";
 
+const SCROLLABLE_OVERFLOW_VALUES = new Set(["auto", "scroll", "overlay"]);
+
 function getAxisMetrics(el: HTMLElement, axis: ScrollAxis) {
   if (axis === "vertical") {
     return {
@@ -28,6 +30,12 @@ function clamp(value: number, min: number, max: number) {
   if (value < min) return min;
   if (value > max) return max;
   return value;
+}
+
+function supportsVerticalScroll(el: HTMLElement) {
+  const style = window.getComputedStyle(el);
+  if (!SCROLLABLE_OVERFLOW_VALUES.has(style.overflowY)) return false;
+  return el.scrollHeight > el.clientHeight;
 }
 
 export function canScrollInDirection(
@@ -69,6 +77,36 @@ export function applyScrollbarDrag(
   return next !== current;
 }
 
+export function shouldHandleHorizontalWheel(
+  container: HTMLElement | null,
+  event: Pick<WheelEvent<HTMLElement>, "target" | "deltaY">,
+) {
+  if (!container) return false;
+  if (event.deltaY === 0) return false;
+  if (container.scrollWidth <= container.clientWidth) return false;
+
+  if (!(event.target instanceof HTMLElement)) return true;
+
+  let current: HTMLElement | null = event.target;
+  while (current && current !== container) {
+    if (supportsVerticalScroll(current)) {
+      const canConsume = canScrollInDirection(current, "vertical", event.deltaY);
+      if (canConsume) return false;
+    }
+    current = current.parentElement;
+  }
+
+  return true;
+}
+
+export function applyHorizontalScroll(
+  container: HTMLElement | null,
+  deltaY: number,
+) {
+  if (!container) return false;
+  return applyWheelScroll(container, "horizontal", deltaY);
+}
+
 export function handleVerticalWheel(event: WheelEvent<HTMLElement>) {
   const consumed = applyWheelScroll(event.currentTarget, "vertical", event.deltaY);
   if (!consumed) return false;
@@ -80,9 +118,8 @@ export function handleVerticalWheel(event: WheelEvent<HTMLElement>) {
 export function handleHorizontalWheelFromWheel(
   event: WheelEvent<HTMLElement>,
 ) {
-  const delta = Math.abs(event.deltaY) >= Math.abs(event.deltaX)
-    ? event.deltaY
-    : event.deltaX;
+  const delta =
+    Math.abs(event.deltaY) >= Math.abs(event.deltaX) ? event.deltaY : event.deltaX;
   const consumed = applyWheelScroll(event.currentTarget, "horizontal", delta);
   if (!consumed) return false;
   event.preventDefault();

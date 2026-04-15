@@ -7,13 +7,15 @@ import {
   type CSSProperties,
   type FocusEvent,
   type ReactNode,
+  type WheelEvent,
 } from "react";
 import type { Settings } from "../../store";
 import HotkeyCaptureInput from "../HotkeyCaptureInput";
 import React from "react";
 import {
-  handleHorizontalWheelFromWheel,
+  applyHorizontalScroll,
   handleVerticalWheel,
+  shouldHandleHorizontalWheel,
 } from "../../scroll/scrollBehavior";
 
 interface Props {
@@ -184,6 +186,7 @@ function maxDoubleClickDelayMs(
   return cps > 0 ? Math.floor(1000 / cps) - 2 : 9999;
 }
 
+
 export default function AdvancedPanelLayout({
   settings,
   update,
@@ -196,6 +199,14 @@ export default function AdvancedPanelLayout({
   const rowSpacing = compact ? 6 : 8;
   const cardBodyClass = `adv-card-body ${compact ? "adv-card-body-compact" : ""}`;
   const featureBodyClass = `adv-feature-body ${compact ? "adv-feature-body-compact" : ""}`;
+  const advancedColumnsRef = useRef<HTMLDivElement>(null);
+
+  const handleAdvancedColumnsWheel = (event: WheelEvent<HTMLDivElement>) => {
+    if (!shouldHandleHorizontalWheel(advancedColumnsRef.current, event)) return;
+    const consumed = applyHorizontalScroll(advancedColumnsRef.current, event.deltaY);
+    if (!consumed) return;
+    event.preventDefault();
+  };
 
   useEffect(() => {
     const max = maxDoubleClickDelayMs(
@@ -229,8 +240,9 @@ export default function AdvancedPanelLayout({
     return (
       <div className="advanced-panel advanced-panel-text">
         <div
+          ref={advancedColumnsRef}
           className="advanced-columns"
-          onWheel={handleHorizontalWheelFromWheel}
+          onWheel={handleAdvancedColumnsWheel}
           data-testid="advanced-columns-scroll"
         >
           <div

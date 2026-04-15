@@ -1,9 +1,11 @@
 import { describe, expect, it } from "vitest";
 import {
+  applyHorizontalScroll,
   applyScrollbarDrag,
   applyWheelScroll,
   handleHorizontalWheelFromWheel,
   handleVerticalWheel,
+  shouldHandleHorizontalWheel,
 } from "../src/scroll/scrollBehavior";
 
 function createScrollable({
@@ -30,6 +32,8 @@ function createScrollable({
   el.scrollTop = scrollTop;
   return el;
 }
+
+
 
 function createWheelEvent(target: HTMLElement, deltaX: number, deltaY: number) {
   let prevented = false;
@@ -75,6 +79,46 @@ describe("frontend scroll layout contract", () => {
     expect(wasStopped()).toBe(true);
   });
 
+
+
+  it("leaves vertical wheel behavior for nested vertically scrollable areas", () => {
+    const container = createScrollable({ clientWidth: 220, scrollWidth: 800 });
+    const nested = createScrollable({ clientHeight: 120, scrollHeight: 600, scrollTop: 60 });
+    container.appendChild(nested);
+    nested.style.overflowY = "auto";
+
+    const shouldHandle = shouldHandleHorizontalWheel(container, {
+      target: nested,
+      deltaY: 40,
+    } as never);
+
+    expect(shouldHandle).toBe(false);
+  });
+
+  it("handles wheel-to-horizontal only when overflow exists and movement is consumed", () => {
+    const container = createScrollable({ clientWidth: 220, scrollWidth: 800 });
+
+    const shouldHandle = shouldHandleHorizontalWheel(container, {
+      target: container,
+      deltaY: 55,
+    } as never);
+    const consumed = applyHorizontalScroll(container, 55);
+
+    expect(shouldHandle).toBe(true);
+    expect(consumed).toBe(true);
+    expect(container.scrollLeft).toBe(55);
+  });
+
+  it("does not handle wheel-to-horizontal when no horizontal overflow exists", () => {
+    const container = createScrollable({ clientWidth: 220, scrollWidth: 220 });
+
+    const shouldHandle = shouldHandleHorizontalWheel(container, {
+      target: container,
+      deltaY: 40,
+    } as never);
+
+    expect(shouldHandle).toBe(false);
+  });
   it("supports advanced column vertical wheel scrolling", () => {
     const advancedColumn = createScrollable({ clientHeight: 180, scrollHeight: 640 });
     const { event } = createWheelEvent(advancedColumn, 0, 90);
