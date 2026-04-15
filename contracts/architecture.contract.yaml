@@ -17,6 +17,7 @@ services:
     modules:
       - simple_panel
       - advanced_panel_layout
+      - frontend_scroll_layout
   input_automation_engine:
     description: Executes timed click and scroll actions through Windows input events.
     modules:

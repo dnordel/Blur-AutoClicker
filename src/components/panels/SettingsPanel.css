@@ -3,7 +3,9 @@
   flex-direction: column;
   padding: 4px 20px;
   height: 100%;
-  overflow-y: auto;
+  min-height: 0;
+  min-width: 0;
+  overflow: auto;
 }
 
 .settings-panel::-webkit-scrollbar {
