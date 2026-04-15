@@ -1,0 +1,17 @@
+module:
+  name: store
+  language: typescript
+  path: src/store.ts
+  version: 1.1.0
+  description: Frontend settings definitions, defaults, and sanitization helpers for persisted configuration.
+functions: []
+classes: []
+data_structures:
+  - name: Settings
+    description: User-configurable clicker settings including click and scroll actions.
+    fields:
+      mouseButton:
+        type: '"Left" | "Middle" | "Right" | "ScrollUp" | "ScrollDown"'
+dependencies:
+  - '@tauri-apps/plugin-store'
+  - '@tauri-apps/api/app'

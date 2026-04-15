@@ -1,16 +1,17 @@
 # SPEC TEMPLATE
 
 ## Feature
-Window Sizing & DPI Compatibility
+Click + Scroll Automation Modes
 
 ## Problem
-The desktop UI can be clipped at high OS scale factors.
+Users can only configure mouse click actions from the GUI and cannot select scroll wheel automation.
 
 ## Requirements
-- Main window must be resizable.
-- Minimum size must preserve core controls and title bar.
-- Behavior must be consistent across DPI scaling settings.
+- GUI must expose both click actions and scroll wheel directions.
+- Existing hotkey and timing controls must continue to work with scroll actions.
+- Input simulation must remain interruptible by existing stop/failsafe logic.
 
 ## Validation
-- Launch app at 100%, 150%, 200% scale.
-- Confirm no clipping after manual resize.
+- Select Scroll Up and Scroll Down from simple panel and advanced panel.
+- Start automation and confirm wheel events are produced.
+- Verify Toggle/Hold modes and stop/failsafe behavior remain functional.

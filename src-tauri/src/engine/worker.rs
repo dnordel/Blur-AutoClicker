@@ -13,7 +13,7 @@ use crate::ClickerStatusPayload;
 use crate::STATUS_EVENT;
 
 use super::failsafe::should_stop_for_failsafe;
-use super::mouse::{get_button_flags, get_cursor_pos, move_mouse, send_clicks, smooth_move};
+use super::mouse::{get_button_flags, get_cursor_pos, move_mouse, send_actions, smooth_move};
 use super::rng::SmallRng;
 use super::ClickerConfig;
 use super::NtSetTimerResolution;
@@ -127,10 +127,12 @@ pub fn build_config(settings: &ClickerSettings) -> Result<ClickerConfig, String>
         _ => 1.0 / settings.click_speed,
     };
 
-    let button = match settings.mouse_button.as_str() {
-        "Right" => 2,
-        "Middle" => 3,
-        _ => 1,
+    let (button, scroll_delta) = match settings.mouse_button.as_str() {
+        "Right" => (2, 0),
+        "Middle" => (3, 0),
+        "ScrollUp" => (1, 120),
+        "ScrollDown" => (1, -120),
+        _ => (1, 0),
     };
 
     let time_limit_secs = if settings.time_limit_enabled {
@@ -162,6 +164,7 @@ pub fn build_config(settings: &ClickerSettings) -> Result<ClickerConfig, String>
         },
         time_limit: time_limit_secs.unwrap_or(0.0),
         button,
+        scroll_delta,
         double_click_enabled: settings.double_click_enabled,
         double_click_delay_ms: settings.double_click_delay,
         pos_x: if settings.position_enabled {
@@ -332,9 +335,10 @@ pub fn start_clicker(config: ClickerConfig, running: Arc<AtomicBool>) -> RunOutc
             break;
         }
 
-        send_clicks(
+        send_actions(
             down_flag,
             up_flag,
+            config.scroll_delta,
             clicks_this_cycle,
             hold_ms,
             config.double_click_enabled,
