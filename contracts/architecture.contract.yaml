@@ -1,0 +1,13 @@
+system_name: Blur AutoClicker
+layers:
+  - desktop_ui
+  - frontend
+  - backend
+services:
+  desktop_window_service:
+    description: Hosts and sizes the Tauri desktop main window.
+    modules:
+      - tauri_window_config
+datastores: []
+external_apis: []
+background_jobs: []
