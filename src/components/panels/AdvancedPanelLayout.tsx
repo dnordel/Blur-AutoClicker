@@ -11,6 +11,10 @@ import {
 import type { Settings } from "../../store";
 import HotkeyCaptureInput from "../HotkeyCaptureInput";
 import React from "react";
+import {
+  handleHorizontalWheelFromWheel,
+  handleVerticalWheel,
+} from "../../scroll/scrollBehavior";
 
 interface Props {
   settings: Settings;
@@ -224,8 +228,16 @@ export default function AdvancedPanelLayout({
   if (!compact) {
     return (
       <div className="advanced-panel advanced-panel-text">
-        <div className="advanced-columns">
-          <div className="advanced-col">
+        <div
+          className="advanced-columns"
+          onWheel={handleHorizontalWheelFromWheel}
+          data-testid="advanced-columns-scroll"
+        >
+          <div
+            className="advanced-col"
+            onWheel={handleVerticalWheel}
+            data-testid="advanced-col-left-scroll"
+          >
             <div className="sectioncontainer adv-basic-card">
               <div className="adv-row">
                 <div className="adv-numbox-sm">
@@ -400,7 +412,11 @@ export default function AdvancedPanelLayout({
             </div>
           </div>
 
-          <div className="advanced-col">
+          <div
+            className="advanced-col"
+            onWheel={handleVerticalWheel}
+            data-testid="advanced-col-right-scroll"
+          >
             <div className="sectioncontainer adv-limits-card">
               <div
                 className="adv-row"

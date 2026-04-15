@@ -1,19 +1,99 @@
 module:
   name: frontend_scroll_layout
-  language: css
-  path: src/index.css
-  version: 1.0.0
-  description: Global frontend scroll container behavior and overflow boundaries for desktop panel rendering.
-functions: []
+  language: typescript
+  path: src/scroll/scrollBehavior.ts
+  version: 1.1.0
+  description: Shared scroll behavior contract for settings and advanced panel containers, including wheel routing, boundary clamping, and parent handoff.
+functions:
+  - name: canScrollInDirection
+    description: Returns whether the container can scroll further in the wheel direction for the given axis.
+    locked: false
+    inputs:
+      el:
+        type: HTMLElement
+        required: true
+      axis:
+        type: '"vertical" | "horizontal"'
+        required: true
+      delta:
+        type: number
+        required: true
+    returns:
+      type: boolean
+    exceptions: []
+    side_effects: none
+  - name: applyWheelScroll
+    description: Applies wheel delta on the target axis, clamps within bounds, and reports whether movement was consumed.
+    locked: false
+    inputs:
+      el:
+        type: HTMLElement
+        required: true
+      axis:
+        type: '"vertical" | "horizontal"'
+        required: true
+      delta:
+        type: number
+        required: true
+    returns:
+      type: boolean
+    exceptions: []
+    side_effects: mutates scrollTop or scrollLeft
+  - name: applyScrollbarDrag
+    description: Applies direct scrollbar drag position updates with boundary clamping.
+    locked: false
+    inputs:
+      el:
+        type: HTMLElement
+        required: true
+      axis:
+        type: '"vertical" | "horizontal"'
+        required: true
+      nextPosition:
+        type: number
+        required: true
+    returns:
+      type: boolean
+    exceptions: []
+    side_effects: mutates scrollTop or scrollLeft
+  - name: handleVerticalWheel
+    description: Consumes vertical wheel events for child containers only when the container can move; otherwise allows parent handoff.
+    locked: false
+    inputs:
+      event:
+        type: WheelEvent<HTMLElement>
+        required: true
+    returns:
+      type: boolean
+    exceptions: []
+    side_effects: may call preventDefault and stopPropagation
+  - name: handleHorizontalWheelFromWheel
+    description: Routes wheel intent to horizontal scrolling in advanced columns, preferring deltaY for wheel-to-horizontal behavior.
+    locked: false
+    inputs:
+      event:
+        type: WheelEvent<HTMLElement>
+        required: true
+    returns:
+      type: boolean
+    exceptions: []
+    side_effects: may call preventDefault and stopPropagation
 classes: []
 data_structures:
-  - name: panel-area
-    description: Main panel viewport container that enables bidirectional scrolling when child content exceeds available space.
+  - name: frontend_scroll_behavior_expectations
+    description: Contract-declared frontend scroll scenarios that must be validated by automated tests.
     fields:
-      overflow:
-        type: auto
-      overscroll-behavior:
-        type: contain
+      settings_panel_vertical_wheel:
+        type: implemented
+      advanced_panel_horizontal_wheel_to_horizontal:
+        type: implemented
+      advanced_column_vertical_wheel:
+        type: implemented
+      scrollbar_drag_settings_advanced_columns_advanced_column:
+        type: implemented
+      boundary_clamp_and_parent_handoff:
+        type: implemented
 dependencies:
-  - src/components/panels/Modes.css
-  - src/components/panels/SettingsPanel.css
+  - src/components/panels/SettingsPanel.tsx
+  - src/components/panels/AdvancedPanelLayout.tsx
+  - tests/frontend-scroll-layout.test.ts

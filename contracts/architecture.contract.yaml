@@ -12,6 +12,7 @@ services:
     description: Maintains user settings schema and persistence in the frontend.
     modules:
       - store
+      - settings_panel
   frontend_control_panels:
     description: Renders simple and advanced control panels for click and scroll actions.
     modules:

@@ -1,0 +1,12 @@
+module:
+  name: settings_panel
+  language: typescript
+  path: src/components/panels/SettingsPanel.tsx
+  version: 1.0.0
+  description: Settings panel UI rendering and vertical container scroll behavior.
+functions: []
+classes: []
+data_structures: []
+dependencies:
+  - src/store.ts
+  - src/scroll/scrollBehavior.ts
