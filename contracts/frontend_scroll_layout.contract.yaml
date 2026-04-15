@@ -2,7 +2,7 @@ module:
   name: frontend_scroll_layout
   language: css
   path: src/index.css
-  version: 1.0.0
+  version: 1.0.1
   description: Global frontend scroll container behavior and overflow boundaries for desktop panel rendering.
 functions: []
 classes: []
@@ -14,6 +14,19 @@ data_structures:
         type: auto
       overscroll-behavior:
         type: contain
+  - name: advanced-columns-wheel-horizontal
+    description: Advanced mode columns support wheel-driven horizontal scrolling when horizontal overflow exists and nested vertical scroll targets cannot consume wheel input.
+    fields:
+      overflow-check:
+        type: scrollWidth > clientWidth
+      wheel-delta-mapping:
+        type: deltaY -> scrollLeft
+      prevent-default-policy:
+        type: only_when_horizontal_scroll_consumed
+      sensitivity-setting:
+        type: settings.horizontalWheelScrollFactor (0.2..5)
 dependencies:
   - src/components/panels/Modes.css
   - src/components/panels/SettingsPanel.css
+  - src/components/panels/AdvancedPanelLayout.tsx
+  - src/components/panels/horizontalWheel.ts

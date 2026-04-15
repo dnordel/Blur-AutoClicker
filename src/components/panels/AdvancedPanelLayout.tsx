@@ -11,6 +11,10 @@ import {
 import type { Settings } from "../../store";
 import HotkeyCaptureInput from "../HotkeyCaptureInput";
 import React from "react";
+import {
+  applyHorizontalScroll,
+  shouldHandleHorizontalWheel,
+} from "./horizontalWheel";
 
 interface Props {
   settings: Settings;
@@ -189,6 +193,7 @@ export default function AdvancedPanelLayout({
 }: Props) {
   const [pickingPosition, setPickingPosition] = useState(false);
   const [pickCountdown, setPickCountdown] = useState<number | null>(null);
+  const columnsRef = useRef<HTMLDivElement>(null);
   const rowSpacing = compact ? 6 : 8;
   const cardBodyClass = `adv-card-body ${compact ? "adv-card-body-compact" : ""}`;
   const featureBodyClass = `adv-feature-body ${compact ? "adv-feature-body-compact" : ""}`;
@@ -221,10 +226,39 @@ export default function AdvancedPanelLayout({
     }
   };
 
+  const handleHorizontalWheel = (event: React.WheelEvent<HTMLDivElement>) => {
+    const container = columnsRef.current;
+    if (!container) {
+      return;
+    }
+
+    const shouldHandle = shouldHandleHorizontalWheel({
+      container,
+      eventTarget: event.target,
+      deltaY: event.deltaY,
+    });
+    if (!shouldHandle) {
+      return;
+    }
+
+    const consumed = applyHorizontalScroll(
+      container,
+      event.deltaY,
+      settings.horizontalWheelScrollFactor,
+    );
+    if (consumed) {
+      event.preventDefault();
+    }
+  };
+
   if (!compact) {
     return (
       <div className="advanced-panel advanced-panel-text">
-        <div className="advanced-columns">
+        <div
+          className="advanced-columns"
+          ref={columnsRef}
+          onWheel={handleHorizontalWheel}
+        >
           <div className="advanced-col">
             <div className="sectioncontainer adv-basic-card">
               <div className="adv-row">
@@ -288,6 +322,38 @@ export default function AdvancedPanelLayout({
                       {ACTION_LABELS[b]}
                     </button>
                   ))}
+                </div>
+              </div>
+              <div className="adv-row" style={{ marginTop: rowSpacing }}>
+                <span className="adv-label">Wheel → Horizontal</span>
+                <input
+                  type="range"
+                  min={0.2}
+                  max={5}
+                  step={0.1}
+                  value={settings.horizontalWheelScrollFactor}
+                  onChange={(event) =>
+                    update({
+                      horizontalWheelScrollFactor: Number(event.target.value),
+                    })
+                  }
+                  style={{ width: "120px" }}
+                />
+                <div className="adv-numbox-sm">
+                  <NumInput
+                    value={settings.horizontalWheelScrollFactor}
+                    onChange={(value) =>
+                      update({
+                        horizontalWheelScrollFactor: Math.max(
+                          0.2,
+                          Math.min(5, value),
+                        ),
+                      })
+                    }
+                    min={0.2}
+                    max={5}
+                    style={{ width: "52px" }}
+                  />
                 </div>
               </div>
             </div>
@@ -697,6 +763,38 @@ export default function AdvancedPanelLayout({
                     {ACTION_LABELS[b]}
                   </button>
                 ))}
+              </div>
+            </div>
+            <div className="adv-row" style={{ marginTop: rowSpacing }}>
+              <span className="adv-label">Wheel → Horizontal</span>
+              <input
+                type="range"
+                min={0.2}
+                max={5}
+                step={0.1}
+                value={settings.horizontalWheelScrollFactor}
+                onChange={(event) =>
+                  update({
+                    horizontalWheelScrollFactor: Number(event.target.value),
+                  })
+                }
+                style={{ width: "110px" }}
+              />
+              <div className="adv-numbox-sm">
+                <NumInput
+                  value={settings.horizontalWheelScrollFactor}
+                  onChange={(value) =>
+                    update({
+                      horizontalWheelScrollFactor: Math.max(
+                        0.2,
+                        Math.min(5, value),
+                      ),
+                    })
+                  }
+                  min={0.2}
+                  max={5}
+                  style={{ width: "48px" }}
+                />
               </div>
             </div>
           </div>

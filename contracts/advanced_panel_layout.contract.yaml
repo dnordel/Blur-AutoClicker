@@ -2,9 +2,32 @@ module:
   name: advanced_panel_layout
   language: typescript
   path: src/components/panels/AdvancedPanelLayout.tsx
-  version: 1.1.0
-  description: Advanced-mode panel layout and controls for clicker behavior and action selection.
-functions: []
+  version: 1.1.1
+  description: Advanced-mode panel layout and controls for clicker behavior, action selection, and wheel-to-horizontal panel navigation.
+functions:
+  - name: AdvancedPanelLayout
+    description: Renders advanced settings layout with dual-mode density and managed wheel behavior for horizontal overflow columns.
+    locked: false
+    inputs:
+      settings:
+        type: Settings
+        required: true
+      update:
+        type: (patch: Partial<Settings>) => void
+        required: true
+      onPickPosition:
+        type: () => Promise<void>
+        required: true
+      compact:
+        type: boolean
+        required: true
+      showExplanations:
+        type: boolean
+        required: true
+    returns:
+      type: JSX.Element
+    exceptions: []
+    side_effects: handles wheel events and updates settings state
 classes: []
 data_structures:
   - name: ACTION_OPTIONS
@@ -12,5 +35,15 @@ data_structures:
     fields:
       values:
         type: Left | Middle | Right | ScrollUp | ScrollDown
+  - name: horizontalWheelScrollFactor
+    description: User-configurable multiplier that scales vertical wheel delta into horizontal scroll movement for advanced columns.
+    fields:
+      type:
+        type: number
+      range:
+        type: 0.2..5
+      controls:
+        type: slider + numeric input
 dependencies:
   - src/store.ts
+  - src/components/panels/horizontalWheel.ts

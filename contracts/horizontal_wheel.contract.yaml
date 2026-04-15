@@ -1,0 +1,47 @@
+module:
+  name: horizontal_wheel
+  language: typescript
+  path: src/components/panels/horizontalWheel.ts
+  version: 1.0.0
+  description: Utility helpers for converting vertical wheel input to horizontal scrolling while preserving nested vertical scroll behavior.
+functions:
+  - name: shouldHandleHorizontalWheel
+    description: Returns true when the container has horizontal overflow, deltaY is non-zero, and no nested vertical scroller can consume the wheel input.
+    locked: false
+    inputs:
+      context:
+        type: HorizontalWheelContext
+        required: true
+    returns:
+      type: boolean
+    exceptions: []
+    side_effects: none
+  - name: applyHorizontalScroll
+    description: Applies scaled deltaY movement to scrollLeft and reports whether the container position changed.
+    locked: false
+    inputs:
+      container:
+        type: HTMLDivElement
+        required: true
+      deltaY:
+        type: number
+        required: true
+      scrollFactor:
+        type: number
+        required: true
+    returns:
+      type: boolean
+    exceptions: []
+    side_effects: mutates container.scrollLeft
+classes: []
+data_structures:
+  - name: HorizontalWheelContext
+    description: Runtime wheel event context used to determine whether horizontal conversion should run.
+    fields:
+      container:
+        type: HTMLDivElement
+      eventTarget:
+        type: EventTarget | null
+      deltaY:
+        type: number
+dependencies: []

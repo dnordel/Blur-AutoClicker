@@ -46,6 +46,7 @@ export interface Settings {
   showStopReason: boolean;
   showStopOverlay: boolean;
   theme: Theme;
+  horizontalWheelScrollFactor: number;
 }
 
 export interface ClickerStatus {
@@ -99,6 +100,7 @@ export const DEFAULT_SETTINGS: Settings = {
   showStopReason: true,
   showStopOverlay: true,
   theme: "dark",
+  horizontalWheelScrollFactor: 1,
 };
 
 function sanitizeSavedPanel(value: unknown): SavedPanel {
@@ -189,6 +191,7 @@ function sanitizeSettings(input?: Partial<Settings> | null): Settings {
     explanationMode: sanitizeExplanationMode(saved),
     lastPanel: sanitizeSavedPanel(saved.lastPanel),
     theme: saved.theme === "light" ? "light" : "dark",
+    horizontalWheelScrollFactor: clampNumber(saved.horizontalWheelScrollFactor, DEFAULT_SETTINGS.horizontalWheelScrollFactor, 0.2, 5),
   };
 }
 

@@ -13,6 +13,10 @@ modules:
     path: src/components/panels/AdvancedPanelLayout.tsx
     depends_on:
       - store
+      - horizontal_wheel
+  horizontal_wheel:
+    path: src/components/panels/horizontalWheel.ts
+    depends_on: []
   frontend_scroll_layout:
     path: src/index.css
     depends_on: []
