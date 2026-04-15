@@ -2,7 +2,7 @@ module:
   name: advanced_panel_layout
   language: typescript
   path: src/components/panels/AdvancedPanelLayout.tsx
-  version: 1.1.0
+  version: 1.2.0
   description: Advanced-mode panel layout and controls for clicker behavior and action selection.
 functions: []
 classes: []
@@ -14,3 +14,4 @@ data_structures:
         type: Left | Middle | Right | ScrollUp | ScrollDown
 dependencies:
   - src/store.ts
+  - src/scroll/scrollBehavior.ts

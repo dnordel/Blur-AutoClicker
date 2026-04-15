@@ -17,4 +17,8 @@ Users can only configure mouse click actions from the GUI and cannot select scro
 - Select Scroll Up and Scroll Down from simple panel and advanced panel.
 - Start automation and confirm wheel events are produced.
 - Verify Toggle/Hold modes and stop/failsafe behavior remain functional.
-- Confirm mouse wheel/trackpad and scrollbar drag both work in all panels inside the desktop wrapper.
+- Scenario 1: Settings panel vertical wheel scrolling moves `scrollTop` and consumes wheel only when movement is possible.
+- Scenario 2: Advanced panel columns convert wheel intent to horizontal movement (`deltaY`/`deltaX` → `scrollLeft`).
+- Scenario 3: Advanced column containers independently consume vertical wheel movement (`scrollTop`) before parent routing.
+- Scenario 4: Scrollbar drag interaction updates position in each scrollable container (settings panel, advanced columns, advanced columns' vertical containers).
+- Scenario 5: Boundary behavior clamps at top/bottom/left/right and hands wheel events to the parent container when child movement is no longer possible.

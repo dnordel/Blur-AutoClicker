@@ -3,6 +3,7 @@ import type { AppInfo, Settings } from "../../store";
 import { invoke } from "@tauri-apps/api/core";
 import { useEffect, useRef, useState } from "react";
 import { open } from "@tauri-apps/plugin-shell";
+import { handleVerticalWheel } from "../../scroll/scrollBehavior";
 
 interface CumulativeStats {
   totalClicks: number;
@@ -71,7 +72,13 @@ export default function SettingsPanel({
 
   return (
     <div className="settings-wrapper">
-      <div className="settings-panel" ref={panelRef} onScroll={handleScroll}>
+      <div
+        className="settings-panel"
+        ref={panelRef}
+        onScroll={handleScroll}
+        onWheel={handleVerticalWheel}
+        data-testid="settings-panel-scroll"
+      >
         <div className="social-links">
           <span className="settings-label">Support Me</span>
           <div className="social-icons">
