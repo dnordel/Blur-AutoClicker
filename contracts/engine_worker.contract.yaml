@@ -1,0 +1,17 @@
+module:
+  name: engine_worker
+  language: rust
+  path: src-tauri/src/engine/worker.rs
+  version: 1.1.0
+  description: Runtime clicker worker loop that converts settings into actions and executes click/scroll batches.
+functions: []
+classes: []
+data_structures:
+  - name: ClickerConfig
+    description: Runtime execution configuration, including optional scroll wheel delta for scroll automation.
+    fields:
+      scroll_delta:
+        type: i32
+dependencies:
+  - src-tauri/src/engine/mouse.rs
+  - src-tauri/src/engine/failsafe.rs

@@ -17,7 +17,13 @@ const INTERVAL_OPTIONS = [
 ] as const;
 
 const MODE_OPTIONS = ["Toggle", "Hold"] as const;
-const MOUSE_BUTTON_OPTIONS = ["Left", "Middle", "Right"] as const;
+const MOUSE_BUTTON_OPTIONS = [
+  "Left",
+  "Middle",
+  "Right",
+  "ScrollUp",
+  "ScrollDown",
+] as const;
 
 export default function SimplePanel({ settings, update }: SimplePanelProps) {
   const normalizeRaw = (raw: string) => raw.replace(/^0+(?=\d)/, "");
@@ -241,6 +247,8 @@ export default function SimplePanel({ settings, update }: SimplePanelProps) {
                 Left: "Left Click",
                 Middle: "Middle Click",
                 Right: "Right Click",
+                ScrollUp: "Scroll Up",
+                ScrollDown: "Scroll Down",
               }[settings.mouseButton]
             }
           </button>

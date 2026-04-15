@@ -5,7 +5,7 @@ use std::time::Duration;
 use windows_sys::Win32::UI::Input::KeyboardAndMouse::{
     SendInput, INPUT, INPUT_MOUSE, MOUSEEVENTF_LEFTDOWN, MOUSEEVENTF_LEFTUP,
     MOUSEEVENTF_MIDDLEDOWN, MOUSEEVENTF_MIDDLEUP, MOUSEEVENTF_RIGHTDOWN, MOUSEEVENTF_RIGHTUP,
-    MOUSEINPUT,
+    MOUSEEVENTF_WHEEL, MOUSEINPUT,
 };
 use windows_sys::Win32::UI::WindowsAndMessaging::{
     GetSystemMetrics, SetCursorPos, SM_CXSCREEN, SM_CYSCREEN,
@@ -76,6 +76,24 @@ pub fn send_mouse_event(flags: u32) {
     unsafe { SendInput(1, &input, std::mem::size_of::<INPUT>() as i32) };
 }
 
+#[inline]
+pub fn send_scroll_event(delta: i32) {
+    let input = INPUT {
+        r#type: INPUT_MOUSE,
+        Anonymous: windows_sys::Win32::UI::Input::KeyboardAndMouse::INPUT_0 {
+            mi: MOUSEINPUT {
+                dx: 0,
+                dy: 0,
+                mouseData: delta as u32,
+                dwFlags: MOUSEEVENTF_WHEEL,
+                time: 0,
+                dwExtraInfo: 0,
+            },
+        },
+    };
+    unsafe { SendInput(1, &input, std::mem::size_of::<INPUT>() as i32) };
+}
+
 pub fn send_batch(down: u32, up: u32, n: usize, _hold_ms: u32) {
     let mut inputs: Vec<INPUT> = Vec::with_capacity(n * 2);
     for _ in 0..n {
@@ -120,6 +138,40 @@ pub fn send_clicks(
         }
         send_mouse_event(up);
 
+        if index + 1 < count && use_double_click_gap && double_click_delay_ms > 0 {
+            sleep_interruptible(Duration::from_millis(double_click_delay_ms as u64), running);
+        }
+    }
+}
+
+pub fn send_actions(
+    down: u32,
+    up: u32,
+    scroll_delta: i32,
+    count: usize,
+    hold_ms: u32,
+    use_double_click_gap: bool,
+    double_click_delay_ms: u32,
+    running: &Arc<AtomicBool>,
+) {
+    if scroll_delta == 0 {
+        send_clicks(
+            down,
+            up,
+            count,
+            hold_ms,
+            use_double_click_gap,
+            double_click_delay_ms,
+            running,
+        );
+        return;
+    }
+
+    for index in 0..count {
+        if !running.load(Ordering::SeqCst) {
+            return;
+        }
+        send_scroll_event(scroll_delta);
         if index + 1 < count && use_double_click_gap && double_click_delay_ms > 0 {
             sleep_interruptible(Duration::from_millis(double_click_delay_ms as u64), running);
         }

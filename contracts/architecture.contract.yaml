@@ -8,6 +8,21 @@ services:
     description: Hosts and sizes the Tauri desktop main window.
     modules:
       - tauri_window_config
+  settings_service:
+    description: Maintains user settings schema and persistence in the frontend.
+    modules:
+      - store
+  frontend_control_panels:
+    description: Renders simple and advanced control panels for click and scroll actions.
+    modules:
+      - simple_panel
+      - advanced_panel_layout
+  input_automation_engine:
+    description: Executes timed click and scroll actions through Windows input events.
+    modules:
+      - engine_mod
+      - engine_worker
+      - engine_mouse
 datastores: []
 external_apis: []
 background_jobs: []

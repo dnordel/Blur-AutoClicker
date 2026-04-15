@@ -14,6 +14,7 @@ pub struct ClickerConfig {
     pub duty: f64,
     pub time_limit: f64,
     pub button: i32,
+    pub scroll_delta: i32,
     pub double_click_enabled: bool,
     pub double_click_delay_ms: u32,
     pub pos_x: i32,

@@ -1,0 +1,16 @@
+module:
+  name: engine_mod
+  language: rust
+  path: src-tauri/src/engine/mod.rs
+  version: 1.1.0
+  description: Core engine module definitions for runtime clicker configuration and outcomes.
+functions: []
+classes: []
+data_structures:
+  - name: ClickerConfig
+    description: Runtime clicker configuration with click pacing, stop rules, and action mode details.
+    fields:
+      scroll_delta:
+        type: i32
+dependencies:
+  - src-tauri/src/engine/worker.rs

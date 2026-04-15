@@ -12,7 +12,7 @@ export interface Settings {
   version: string;
   clickSpeed: number;
   clickInterval: "s" | "m" | "h" | "d";
-  mouseButton: "Left" | "Middle" | "Right";
+  mouseButton: "Left" | "Middle" | "Right" | "ScrollUp" | "ScrollDown";
   hotkey: string;
   mode: "Toggle" | "Hold";
   dutyCycleEnabled: boolean;
@@ -105,6 +105,19 @@ function sanitizeSavedPanel(value: unknown): SavedPanel {
   return value === "advanced" ? value : "simple";
 }
 
+function sanitizeMouseButton(value: unknown): Settings["mouseButton"] {
+  const allowed = new Set<Settings["mouseButton"]>([
+    "Left",
+    "Middle",
+    "Right",
+    "ScrollUp",
+    "ScrollDown",
+  ]);
+  return typeof value === "string" && allowed.has(value as Settings["mouseButton"])
+    ? (value as Settings["mouseButton"])
+    : DEFAULT_SETTINGS.mouseButton;
+}
+
 function sanitizeExplanationMode(input: Partial<Settings> | null | undefined): ExplanationMode {
   const saved = (input ?? {}) as Partial<Settings> & {
     functionExplanationsEnabled?: boolean;
@@ -152,6 +165,7 @@ function sanitizeSettings(input?: Partial<Settings> | null): Settings {
     ...saved,
     version: version,
     clickSpeed: clampNumber(saved.clickSpeed, DEFAULT_SETTINGS.clickSpeed, 1, 500),
+    mouseButton: sanitizeMouseButton(saved.mouseButton),
     dutyCycleEnabled: sanitizeBoolean(saved.dutyCycleEnabled, DEFAULT_SETTINGS.dutyCycleEnabled),
     speedVariationEnabled: sanitizeBoolean(
       saved.speedVariationEnabled,

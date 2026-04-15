@@ -1,0 +1,16 @@
+module:
+  name: simple_panel
+  language: typescript
+  path: src/components/panels/SimplePanel.tsx
+  version: 1.1.0
+  description: Simple-mode panel for selecting action type, hotkey mode, and speed controls.
+functions: []
+classes: []
+data_structures:
+  - name: MOUSE_BUTTON_OPTIONS
+    description: Selectable action types exposed in simple mode.
+    fields:
+      values:
+        type: Left | Middle | Right | ScrollUp | ScrollDown
+dependencies:
+  - src/store.ts

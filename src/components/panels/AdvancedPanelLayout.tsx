@@ -149,6 +149,22 @@ const EDGE_KEYS = {
   bottom: "edgeStopBottom",
 } as const;
 
+const ACTION_OPTIONS = [
+  "Left",
+  "Middle",
+  "Right",
+  "ScrollUp",
+  "ScrollDown",
+] as const;
+
+const ACTION_LABELS: Record<(typeof ACTION_OPTIONS)[number], string> = {
+  Left: "Left",
+  Middle: "Middle",
+  Right: "Right",
+  ScrollUp: "Scroll Up",
+  ScrollDown: "Scroll Down",
+};
+
 function maxDoubleClickDelayMs(
   clickSpeed: number,
   clickInterval: string,
@@ -261,15 +277,15 @@ export default function AdvancedPanelLayout({
                 </div>
               </div>
               <div className="adv-row" style={{ marginTop: rowSpacing }}>
-                <span className="adv-label">Mouse Button</span>
+                <span className="adv-label">Action</span>
                 <div className="simple-seg-group">
-                  {(["Left", "Middle", "Right"] as const).map((b) => (
+                  {ACTION_OPTIONS.map((b) => (
                     <button
                       key={b}
                       className={`simple-seg-btn ${settings.mouseButton === b ? "active" : ""}`}
                       onClick={() => update({ mouseButton: b })}
                     >
-                      {b}
+                      {ACTION_LABELS[b]}
                     </button>
                   ))}
                 </div>
@@ -670,15 +686,15 @@ export default function AdvancedPanelLayout({
               </div>
             </div>
             <div className="adv-row" style={{ marginTop: rowSpacing }}>
-              <span className="adv-label">Mouse Button</span>
+              <span className="adv-label">Action</span>
               <div className="simple-seg-group">
-                {(["Left", "Middle", "Right"] as const).map((b) => (
+                {ACTION_OPTIONS.map((b) => (
                   <button
                     key={b}
                     className={`simple-seg-btn ${settings.mouseButton === b ? "active" : ""}`}
                     onClick={() => update({ mouseButton: b })}
                   >
-                    {b}
+                    {ACTION_LABELS[b]}
                   </button>
                 ))}
               </div>

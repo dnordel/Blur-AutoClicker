@@ -1,0 +1,14 @@
+module:
+  name: engine_mouse
+  language: rust
+  path: src-tauri/src/engine/mouse.rs
+  version: 1.1.0
+  description: Windows mouse input helpers for clicking, movement, and scroll wheel automation.
+functions: []
+classes: []
+data_structures:
+  - name: mouse_action
+    description: Low-level SendInput mouse actions for click and wheel behavior.
+    fields: {}
+dependencies:
+  - windows-sys
