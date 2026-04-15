@@ -1,0 +1,46 @@
+module:
+  name: frontend_scroll_routing
+  language: typescript
+  path: src/scroll/scrollRouting.ts
+  version: 1.0.0
+  description: Shared wheel event routing helpers that enforce per-panel scroll ownership in settings and advanced layouts.
+functions:
+  - name: routeVerticalWheel
+    description: Routes a wheel event to vertical scrolling and emits debug routing telemetry in development.
+    locked: false
+    inputs:
+      event:
+        type: WheelEvent<HTMLElement>
+        required: true
+      owner:
+        type: string
+        required: true
+    returns:
+      type: boolean
+    exceptions: []
+    side_effects: may call preventDefault and stopPropagation
+  - name: routeHorizontalWheel
+    description: Routes wheel intent to horizontal scrolling for advanced column strips with nested vertical guard checks and debug telemetry.
+    locked: false
+    inputs:
+      event:
+        type: WheelEvent<HTMLElement>
+        required: true
+      container:
+        type: HTMLElement | null
+        required: true
+      owner:
+        type: string
+        required: true
+    returns:
+      type: boolean
+    exceptions: []
+    side_effects: may call preventDefault
+classes: []
+data_structures: []
+dependencies:
+  - src/scroll/scrollBehavior.ts
+  - src/scroll/scrollOwnershipDebug.ts
+  - src/components/panels/SettingsPanel.tsx
+  - src/components/panels/AdvancedPanelLayout.tsx
+  - tests/frontend-scroll-layout.test.ts

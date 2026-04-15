@@ -1,0 +1,42 @@
+module:
+  name: frontend_scroll_debug
+  language: typescript
+  path: src/scroll/scrollOwnershipDebug.ts
+  version: 1.0.0
+  description: Development-only scroll ownership metadata and wheel routing diagnostics for panel scroll containers.
+functions:
+  - name: getScrollOwnerDebugAttributes
+    description: Returns debug data attributes for identifying the active scroll owner in development builds.
+    locked: false
+    inputs:
+      owner:
+        type: string
+        required: true
+    returns:
+      type: '{ "data-scroll-owner": string } | undefined'
+    exceptions: []
+    side_effects: none
+  - name: reportWheelRouting
+    description: Emits guarded development-only console debug logs for wheel routing decisions.
+    locked: false
+    inputs:
+      owner:
+        type: string
+        required: true
+      event:
+        type: 'Pick<WheelEvent<HTMLElement>, "target" | "deltaX" | "deltaY">'
+        required: true
+      decision:
+        type: '"consumed" | "pass"'
+        required: true
+    returns:
+      type: void
+    exceptions: []
+    side_effects: may write console.debug in development when opt-in flag is enabled
+classes: []
+data_structures: []
+dependencies:
+  - src/components/panels/SettingsPanel.tsx
+  - src/components/panels/AdvancedPanelLayout.tsx
+  - src/scroll/scrollRouting.ts
+  - tests/frontend-scroll-layout.test.ts

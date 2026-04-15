@@ -100,6 +100,6 @@ body {
   flex-direction: column;
   min-height: 0;
   min-width: 0;
-  overflow: auto;
+  overflow: hidden;
   overscroll-behavior: contain;
 }

@@ -3,7 +3,8 @@ import type { AppInfo, Settings } from "../../store";
 import { invoke } from "@tauri-apps/api/core";
 import { useEffect, useRef, useState } from "react";
 import { open } from "@tauri-apps/plugin-shell";
-import { handleVerticalWheel } from "../../scroll/scrollBehavior";
+import { routeVerticalWheel } from "../../scroll/scrollRouting";
+import { getScrollOwnerDebugAttributes } from "../../scroll/scrollOwnershipDebug";
 
 interface CumulativeStats {
   totalClicks: number;
@@ -55,6 +56,7 @@ export default function SettingsPanel({
   const [atBottom, setAtBottom] = useState(false);
 
   const panelRef = useRef<HTMLDivElement>(null);
+  const scrollOwnerAttrs = getScrollOwnerDebugAttributes("settings-panel");
 
   useEffect(() => {
     invoke<CumulativeStats>("get_stats")
@@ -76,8 +78,9 @@ export default function SettingsPanel({
         className="settings-panel"
         ref={panelRef}
         onScroll={handleScroll}
-        onWheel={handleVerticalWheel}
+        onWheel={(event) => routeVerticalWheel(event, "settings-panel")}
         data-testid="settings-panel-scroll"
+        {...scrollOwnerAttrs}
       >
         <div className="social-links">
           <span className="settings-label">Support Me</span>

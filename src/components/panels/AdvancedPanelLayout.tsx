@@ -13,10 +13,10 @@ import type { Settings } from "../../store";
 import HotkeyCaptureInput from "../HotkeyCaptureInput";
 import React from "react";
 import {
-  applyHorizontalScroll,
-  handleVerticalWheel,
-  shouldHandleHorizontalWheel,
-} from "../../scroll/scrollBehavior";
+  routeHorizontalWheel,
+  routeVerticalWheel,
+} from "../../scroll/scrollRouting";
+import { getScrollOwnerDebugAttributes } from "../../scroll/scrollOwnershipDebug";
 
 interface Props {
   settings: Settings;
@@ -200,12 +200,12 @@ export default function AdvancedPanelLayout({
   const cardBodyClass = `adv-card-body ${compact ? "adv-card-body-compact" : ""}`;
   const featureBodyClass = `adv-feature-body ${compact ? "adv-feature-body-compact" : ""}`;
   const advancedColumnsRef = useRef<HTMLDivElement>(null);
+  const advancedColumnsScrollAttrs = getScrollOwnerDebugAttributes("advanced-columns");
+  const advancedLeftColumnScrollAttrs = getScrollOwnerDebugAttributes("advanced-col-left");
+  const advancedRightColumnScrollAttrs = getScrollOwnerDebugAttributes("advanced-col-right");
 
   const handleAdvancedColumnsWheel = (event: WheelEvent<HTMLDivElement>) => {
-    if (!shouldHandleHorizontalWheel(advancedColumnsRef.current, event)) return;
-    const consumed = applyHorizontalScroll(advancedColumnsRef.current, event.deltaY);
-    if (!consumed) return;
-    event.preventDefault();
+    routeHorizontalWheel(event, advancedColumnsRef.current, "advanced-columns");
   };
 
   useEffect(() => {
@@ -244,11 +244,13 @@ export default function AdvancedPanelLayout({
           className="advanced-columns"
           onWheel={handleAdvancedColumnsWheel}
           data-testid="advanced-columns-scroll"
+          {...advancedColumnsScrollAttrs}
         >
           <div
             className="advanced-col"
-            onWheel={handleVerticalWheel}
+            onWheel={(event) => routeVerticalWheel(event, "advanced-col-left")}
             data-testid="advanced-col-left-scroll"
+            {...advancedLeftColumnScrollAttrs}
           >
             <div className="sectioncontainer adv-basic-card">
               <div className="adv-row">
@@ -426,8 +428,9 @@ export default function AdvancedPanelLayout({
 
           <div
             className="advanced-col"
-            onWheel={handleVerticalWheel}
+            onWheel={(event) => routeVerticalWheel(event, "advanced-col-right")}
             data-testid="advanced-col-right-scroll"
+            {...advancedRightColumnScrollAttrs}
           >
             <div className="sectioncontainer adv-limits-card">
               <div
