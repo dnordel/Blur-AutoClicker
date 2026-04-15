@@ -1,0 +1,19 @@
+module:
+  name: frontend_scroll_layout
+  language: css
+  path: src/index.css
+  version: 1.0.0
+  description: Global frontend scroll container behavior and overflow boundaries for desktop panel rendering.
+functions: []
+classes: []
+data_structures:
+  - name: panel-area
+    description: Main panel viewport container that enables bidirectional scrolling when child content exceeds available space.
+    fields:
+      overflow:
+        type: auto
+      overscroll-behavior:
+        type: contain
+dependencies:
+  - src/components/panels/Modes.css
+  - src/components/panels/SettingsPanel.css

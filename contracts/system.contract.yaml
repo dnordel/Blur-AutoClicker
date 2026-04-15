@@ -13,6 +13,9 @@ modules:
     path: src/components/panels/AdvancedPanelLayout.tsx
     depends_on:
       - store
+  frontend_scroll_layout:
+    path: src/index.css
+    depends_on: []
   engine_mod:
     path: src-tauri/src/engine/mod.rs
     depends_on:
