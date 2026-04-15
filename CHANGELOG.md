@@ -1,3 +1,13 @@
+# v3.4.0 - 15.05.2026 (d.m.y)
+## ❇️ New:
+- Added White Mode
+- Added support for Mouse Buttons
+## 🔹 Changed:
+- Added vertical bars to Simple mode Hold and Randomization fields for consistency.
+
+## 🔺 Fix:
+- Fixed Time Limit hover card being split in 2
+
 # v3.3.0 - 14.04.2026 (d.m.y)
 ## ❇️ New:
 - added Github link icon
