@@ -22,6 +22,10 @@ modules:
   frontend_scroll_layout:
     path: src/scroll/scrollBehavior.ts
     depends_on: []
+  frontend_scroll_layout_tests:
+    path: tests/frontend-scroll-layout.test.ts
+    depends_on:
+      - frontend_scroll_layout
   engine_mod:
     path: src-tauri/src/engine/mod.rs
     depends_on:
