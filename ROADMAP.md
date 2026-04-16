@@ -1,6 +1,7 @@
 # ROADMAP
 
 ## Completed
+- Synchronized `contracts/app.contract.yaml` with `src/App.tsx` resize helper modules and explicit resize-trigger side effects; linked regression coverage with `tests/app-window-resize-behavior.test.tsx`.
 - Refactored `src/App.tsx` window resize effect dependencies to a panel-size key (`tab`, update-banner presence, explanation mode) so resize orchestration no longer depends on the full settings object.
 - Split resize control-flow into helper routines for initial placement, shrink-then-snap, and direct grow paths to keep nesting shallow and behavior easier to reason about.
 - Added guarded wheel-to-horizontal handling in Advanced mode using an `.advanced-columns` ref: vertical wheel deltas now map to `scrollLeft` only when horizontal overflow exists and nested vertical scrollers cannot consume the wheel.

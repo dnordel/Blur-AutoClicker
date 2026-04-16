@@ -2,11 +2,154 @@ module:
   name: app
   language: typescript
   path: src/App.tsx
-  version: 1.0.0
+  version: 1.1.0
   description: Top-level frontend app shell coordinating panel rendering, update banner state, and desktop window sizing behavior.
-functions: []
+functions:
+  - name: getPanelSize
+    description: Computes target window dimensions from the active tab, explanation mode, and update-banner visibility.
+    locked: false
+    inputs:
+      tab:
+        type: Tab
+        required: true
+      explanationMode:
+        type: Settings["explanationMode"]
+        required: true
+      hasUpdate:
+        type: boolean
+        required: true
+    returns:
+      type: '{ width: number; height: number }'
+    exceptions: []
+    side_effects: none
+  - name: applyRootSize
+    description: Applies explicit pixel width/height styles to the app root element.
+    locked: false
+    inputs:
+      root:
+        type: HTMLElement
+        required: true
+      width:
+        type: number
+        required: true
+      height:
+        type: number
+        required: true
+    returns:
+      type: void
+    exceptions: []
+    side_effects: mutates root.style.width and root.style.height
+  - name: runInitialResize
+    description: Performs first-load resize, syncs root dimensions, waits for layout stabilization, and runs initial placement.
+    locked: false
+    inputs:
+      root:
+        type: HTMLElement
+        required: true
+      width:
+        type: number
+        required: true
+      height:
+        type: number
+        required: true
+      onPlaceWindow:
+        type: () => Promise<void>
+        required: true
+    returns:
+      type: Promise<void>
+    exceptions: []
+    side_effects: resizes Tauri window, mutates root style, schedules delay, and triggers placement callback
+  - name: runShrinkThenSnapResize
+    description: Handles shrink transitions by snapping to max(current,target), applying root size, then scheduling delayed final snap.
+    locked: false
+    inputs:
+      root:
+        type: HTMLElement
+        required: true
+      width:
+        type: number
+        required: true
+      height:
+        type: number
+        required: true
+      currentW:
+        type: number
+        required: true
+      currentH:
+        type: number
+        required: true
+      onScheduleSnap:
+        type: () => void
+        required: true
+    returns:
+      type: Promise<void>
+    exceptions: []
+    side_effects: may resize Tauri window, mutates root style, and triggers delayed final sizing callback
+  - name: runDirectResize
+    description: Performs direct grow/steady-state resize by updating Tauri size and forcing root reflow before final dimensions.
+    locked: false
+    inputs:
+      root:
+        type: HTMLElement
+        required: true
+      width:
+        type: number
+        required: true
+      height:
+        type: number
+        required: true
+      currentW:
+        type: number
+        required: true
+      currentH:
+        type: number
+        required: true
+    returns:
+      type: Promise<void>
+    exceptions: []
+    side_effects: resizes Tauri window, mutates root style, and forces layout reflow
+  - name: syncSettingsToBackend
+    description: Sends normalized frontend settings to backend with schema version metadata.
+    locked: false
+    inputs:
+      settings:
+        type: Settings
+        required: true
+    returns:
+      type: Promise<void>
+    exceptions: []
+    side_effects: invokes Tauri update_settings command
+  - name: wait
+    description: Resolves after a timeout used by resize orchestration timing.
+    locked: false
+    inputs:
+      ms:
+        type: number
+        required: true
+    returns:
+      type: Promise<unknown>
+    exceptions: []
+    side_effects: schedules a window timeout
+  - name: App
+    description: React application root that orchestrates settings hydration, hotkey registration, resize effects, update polling, and panel rendering.
+    locked: false
+    inputs: {}
+    returns:
+      type: JSX.Element
+    exceptions: []
+    side_effects: |
+      Registers Tauri event listeners, invokes backend commands, persists settings, updates document theme, and resizes/positions the window when panelSizeKey changes.
 classes: []
-data_structures: []
+data_structures:
+  - name: window_resize_trigger_model
+    description: Documents the stable resize trigger dimensions to prevent unnecessary resize side effects.
+    fields:
+      panel_size_key:
+        type: '`${tab}:${settings.explanationMode}:${hasUpdateBanner ? "update" : "no-update"}`'
+      trigger_inputs:
+        type: '[tab, settings.explanationMode, hasUpdateBanner]'
+      excluded_non_size_inputs:
+        type: 'Settings fields unrelated to dimensions (example: theme)'
 dependencies:
   - src/store.ts
   - src/hotkeys.ts
@@ -16,3 +159,4 @@ dependencies:
   - src/components/panels/SettingsPanel.tsx
   - src/components/TitleBar.tsx
   - src/components/Updatebanner.tsx
+  - tests/app-window-resize-behavior.test.tsx

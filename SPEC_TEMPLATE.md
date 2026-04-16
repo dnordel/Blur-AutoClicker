@@ -16,6 +16,7 @@ Users can only configure mouse click actions from the GUI and cannot select scro
 - Advanced columns must translate wheel `deltaY` into horizontal `scrollLeft` only when horizontal overflow exists and only prevent default scrolling when horizontal movement is consumed.
 - Main window resize effects must depend only on size-relevant inputs (active tab, update-banner visibility, and explanation-mode size variant), not the full settings object.
 - Resize orchestration logic should be split into focused helper functions with control-flow nesting capped at three levels for readability and safer refactors.
+- Contract coverage must describe `src/App.tsx` resize helper functions and explicitly declare the resize trigger key (`tab`, explanation-mode variant, update-banner visibility) to keep resize side effects stable across refactors.
 
 ## Validation
 - Select Scroll Up and Scroll Down from simple panel and advanced panel.
@@ -33,3 +34,5 @@ Users can only configure mouse click actions from the GUI and cannot select scro
 - Scenario 9: Changing non-size settings (e.g., unrelated toggles) does not trigger the window resize effect.
 - Scenario 10: Switching tabs, toggling explanation mode, or showing an update banner still triggers the expected resize transitions.
 - Scenario 11: Settings panel UI interactions (wheel and toggle clicks) preserve one stable scroll owner container, do not introduce `[role="scroll-container"]` churn, and remain stable when vertical overflow is present.
+
+- Scenario 12: Contract drift check confirms `contracts/app.contract.yaml` declares current resize helper routines and resize trigger side effects covered by `tests/app-window-resize-behavior.test.tsx`.
