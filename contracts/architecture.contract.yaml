@@ -19,10 +19,12 @@ services:
       - app
       - simple_panel
       - advanced_panel_layout
-      - settings_scroll_stability_ui_test
       - frontend_scroll_layout
       - frontend_scroll_routing
       - frontend_scroll_debug
+      - frontend_scroll_layout_tests
+      - settings_scroll_stability_ui_test
+      - app_window_resize_behavior_test
   input_automation_engine:
     description: Executes timed click and scroll actions through Windows input events.
     modules:
