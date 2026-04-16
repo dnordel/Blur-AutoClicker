@@ -47,6 +47,12 @@ modules:
       - frontend_scroll_layout
       - frontend_scroll_routing
       - frontend_scroll_debug
+  settings_scroll_stability_ui_test:
+    path: tests/settings-scroll-stability.test.tsx
+    depends_on:
+      - settings_panel
+      - frontend_scroll_routing
+      - frontend_scroll_debug
   engine_mod:
     path: src-tauri/src/engine/mod.rs
     depends_on:

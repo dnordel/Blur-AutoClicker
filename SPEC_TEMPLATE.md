@@ -32,3 +32,4 @@ Users can only configure mouse click actions from the GUI and cannot select scro
 - Scenario 8: Development builds expose per-container `data-scroll-owner` attributes and guarded wheel-routing logs to verify wheel-consumption ownership.
 - Scenario 9: Changing non-size settings (e.g., unrelated toggles) does not trigger the window resize effect.
 - Scenario 10: Switching tabs, toggling explanation mode, or showing an update banner still triggers the expected resize transitions.
+- Scenario 11: Settings panel UI interactions (wheel and toggle clicks) preserve one stable scroll owner container, do not introduce `[role="scroll-container"]` churn, and remain stable when vertical overflow is present.

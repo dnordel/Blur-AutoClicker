@@ -19,6 +19,7 @@ services:
       - app
       - simple_panel
       - advanced_panel_layout
+      - settings_scroll_stability_ui_test
       - frontend_scroll_layout
       - frontend_scroll_routing
       - frontend_scroll_debug
