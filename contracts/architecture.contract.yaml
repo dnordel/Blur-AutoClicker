@@ -16,6 +16,7 @@ services:
   frontend_control_panels:
     description: Renders simple and advanced control panels for click and scroll actions with a single scroll-owner routing model per panel.
     modules:
+      - app
       - simple_panel
       - advanced_panel_layout
       - frontend_scroll_layout

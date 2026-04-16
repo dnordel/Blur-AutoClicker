@@ -1,6 +1,8 @@
 # ROADMAP
 
 ## Completed
+- Refactored `src/App.tsx` window resize effect dependencies to a panel-size key (`tab`, update-banner presence, explanation mode) so resize orchestration no longer depends on the full settings object.
+- Split resize control-flow into helper routines for initial placement, shrink-then-snap, and direct grow paths to keep nesting shallow and behavior easier to reason about.
 - Added guarded wheel-to-horizontal handling in Advanced mode using an `.advanced-columns` ref: vertical wheel deltas now map to `scrollLeft` only when horizontal overflow exists and nested vertical scrollers cannot consume the wheel.
 - Implemented frontend scroll interaction tests for settings and advanced containers, including wheel-to-horizontal routing, scrollbar drag simulation, boundary clamping, and parent handoff behavior.
 - Enabled runtime resizing for the main Tauri window and defined minimum size constraints to prevent clipping on high DPI setups.
