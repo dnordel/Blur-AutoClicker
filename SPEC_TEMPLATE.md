@@ -14,6 +14,8 @@ Users can only configure mouse click actions from the GUI and cannot select scro
 - Advanced mode must support horizontal scroll across columns and independent vertical scroll within each column.
 - Each panel mode must declare and preserve a single primary scroll owner to avoid competing overflow containers.
 - Advanced columns must translate wheel `deltaY` into horizontal `scrollLeft` only when horizontal overflow exists and only prevent default scrolling when horizontal movement is consumed.
+- Main window resize effects must depend only on size-relevant inputs (active tab, update-banner visibility, and explanation-mode size variant), not the full settings object.
+- Resize orchestration logic should be split into focused helper functions with control-flow nesting capped at three levels for readability and safer refactors.
 
 ## Validation
 - Select Scroll Up and Scroll Down from simple panel and advanced panel.
@@ -28,3 +30,5 @@ Users can only configure mouse click actions from the GUI and cannot select scro
 - Scenario 6: Wheel events originating in nested vertically-scrollable descendants keep normal vertical behavior until that nested container reaches a boundary, after which parent horizontal routing may apply.
 - Scenario 7: Settings mode uses `.settings-panel` as the authoritative vertical scroller while `.panel-area` remains non-scrolling.
 - Scenario 8: Development builds expose per-container `data-scroll-owner` attributes and guarded wheel-routing logs to verify wheel-consumption ownership.
+- Scenario 9: Changing non-size settings (e.g., unrelated toggles) does not trigger the window resize effect.
+- Scenario 10: Switching tabs, toggling explanation mode, or showing an update banner still triggers the expected resize transitions.

@@ -1,4 +1,13 @@
 modules:
+  app:
+    path: src/App.tsx
+    depends_on:
+      - store
+      - simple_panel
+      - advanced_panel_layout
+      - settings_panel
+      - frontend_scroll_routing
+      - frontend_scroll_debug
   tauri_window_config:
     path: src-tauri/tauri.conf.json
     depends_on: []

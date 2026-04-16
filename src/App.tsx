@@ -25,13 +25,69 @@ import UpdateBanner from "./components/Updatebanner";
 
 export type Tab = "simple" | "advanced" | "settings";
 
-function getPanelSize(tab: Tab, settings: Settings, hasUpdate: boolean) {
+function getPanelSize(
+  tab: Tab,
+  explanationMode: Settings["explanationMode"],
+  hasUpdate: boolean,
+) {
   const extra = hasUpdate ? 30 : 0;
   if (tab === "settings") return { width: 500, height: 600 + extra };
   if (tab === "simple") return { width: 550, height: 175 + extra };
-  return settings.explanationMode === "off"
+  return explanationMode === "off"
     ? { width: 600, height: 600 + extra }
     : { width: 800, height: 650 + extra };
+}
+
+function applyRootSize(root: HTMLElement, width: number, height: number) {
+  root.style.width = `${width}px`;
+  root.style.height = `${height}px`;
+}
+
+async function runInitialResize(
+  root: HTMLElement,
+  width: number,
+  height: number,
+  onPlaceWindow: () => Promise<void>,
+) {
+  const appWindow = getCurrentWindow();
+  await appWindow.setSize(new LogicalSize(width, height));
+  applyRootSize(root, width, height);
+  await wait(30);
+  await onPlaceWindow();
+}
+
+async function runShrinkThenSnapResize(
+  root: HTMLElement,
+  width: number,
+  height: number,
+  currentW: number,
+  currentH: number,
+  onScheduleSnap: () => void,
+) {
+  const appWindow = getCurrentWindow();
+  const snapW = width >= currentW ? width : currentW;
+  const snapH = height >= currentH ? height : currentH;
+
+  if (snapW !== currentW || snapH !== currentH) {
+    await appWindow.setSize(new LogicalSize(snapW, snapH));
+  }
+
+  applyRootSize(root, width, height);
+  onScheduleSnap();
+}
+
+async function runDirectResize(
+  root: HTMLElement,
+  width: number,
+  height: number,
+  currentW: number,
+  currentH: number,
+) {
+  const appWindow = getCurrentWindow();
+  await appWindow.setSize(new LogicalSize(width, height));
+  applyRootSize(root, currentW, currentH);
+  root.offsetHeight;
+  applyRootSize(root, width, height);
 }
 
 const DEFAULT_STATUS: ClickerStatus = {
@@ -207,25 +263,34 @@ export default function App() {
   }, []);
 
   const resizeTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const hasUpdateBanner = Boolean(updateInfo);
+  const panelSizeKey = `${tab}:${settings.explanationMode}:${hasUpdateBanner ? "update" : "no-update"}`;
 
   useEffect(() => {
+    if (!settingsLoaded) return;
+
     if (resizeTimeout.current) {
       clearTimeout(resizeTimeout.current);
       resizeTimeout.current = null;
     }
 
-    const { width, height } = getPanelSize(tab, settings, !!updateInfo);
-    const root = document.querySelector(".app-root") as HTMLElement;
+    const { width, height } = getPanelSize(
+      tab,
+      settings.explanationMode,
+      hasUpdateBanner,
+    );
+    const root = document.querySelector(".app-root") as HTMLElement | null;
+    if (!root) return;
 
     void (async () => {
       try {
         if (!launchWindowPlacementDone.current) {
-          const appWindow = getCurrentWindow();
-          await appWindow.setSize(new LogicalSize(width, height));
-          root.style.width = `${width}px`;
-          root.style.height = `${height}px`;
-          await wait(30);
-          await applyStartupWindowPlacement();
+          await runInitialResize(
+            root,
+            width,
+            height,
+            applyStartupWindowPlacement,
+          );
           launchWindowPlacementDone.current = true;
           return;
         }
@@ -237,35 +302,28 @@ export default function App() {
         const currentW = currentSize.width / scale;
 
         if (width < currentW || height < currentH) {
-          const snapW = width >= currentW ? width : currentW;
-          const snapH = height >= currentH ? height : currentH;
-
-          if (snapW !== currentW || snapH !== currentH) {
-            await appWindow.setSize(new LogicalSize(snapW, snapH));
-          }
-
-          root.style.width = `${width}px`;
-          root.style.height = `${height}px`;
-
-          resizeTimeout.current = setTimeout(async () => {
-            await appWindow.setSize(new LogicalSize(width, height));
-            resizeTimeout.current = null;
-          }, 320);
-        } else {
-          await appWindow.setSize(new LogicalSize(width, height));
-          root.style.width = `${currentW}px`;
-          root.style.height = `${currentH}px`;
-
-          root.offsetHeight;
-
-          root.style.width = `${width}px`;
-          root.style.height = `${height}px`;
+          await runShrinkThenSnapResize(
+            root,
+            width,
+            height,
+            currentW,
+            currentH,
+            () => {
+              resizeTimeout.current = setTimeout(async () => {
+                await appWindow.setSize(new LogicalSize(width, height));
+                resizeTimeout.current = null;
+              }, 320);
+            },
+          );
+          return;
         }
+
+        await runDirectResize(root, width, height, currentW, currentH);
       } catch (err) {
         console.error("Failed to size window:", err);
       }
     })();
-  }, [settings, settingsLoaded, tab, updateInfo]);
+  }, [panelSizeKey, settingsLoaded]);
 
   useEffect(() => {
     const checkForUpdates = () => {

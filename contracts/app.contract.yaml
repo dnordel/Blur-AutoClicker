@@ -1,0 +1,18 @@
+module:
+  name: app
+  language: typescript
+  path: src/App.tsx
+  version: 1.0.0
+  description: Top-level frontend app shell coordinating panel rendering, update banner state, and desktop window sizing behavior.
+functions: []
+classes: []
+data_structures: []
+dependencies:
+  - src/store.ts
+  - src/hotkeys.ts
+  - src/components/panels/SimplePanel.tsx
+  - src/components/panels/AdvancedPanel.tsx
+  - src/components/panels/AdvancedPanelCompact.tsx
+  - src/components/panels/SettingsPanel.tsx
+  - src/components/TitleBar.tsx
+  - src/components/Updatebanner.tsx
