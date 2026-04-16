@@ -10,6 +10,7 @@
 - Enabled stable bidirectional scrolling in panel containers with horizontal advanced-column scrolling and vertical column scrolling.
 - Enforced a single scroll owner per panel mode: `.settings-panel` owns Settings vertical scroll, while Advanced mode uses `.advanced-columns` for horizontal wheel routing and `.advanced-col` containers for vertical overflow.
 - Added development-only scroll ownership debug attributes and guarded wheel-routing logs to verify which container consumes wheel input.
+- Added a UI-level settings panel regression test that verifies stable scroll-owner container identity, no scroll-container role churn during interactions, and overflow wheel stability.
 
 ## Next
 - Add an in-app setting to persist preferred window dimensions per panel.

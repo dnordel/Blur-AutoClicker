@@ -1,0 +1,22 @@
+module:
+  name: settings_scroll_stability_ui_test
+  language: typescript
+  path: tests/settings-scroll-stability.test.tsx
+  version: 1.0.0
+  description: UI-level regression tests that verify settings panel scroll owner stability during interactions and overflow wheel handling.
+functions: []
+classes: []
+data_structures:
+  - name: settings_scroll_stability_scenarios
+    description: Declares contract-backed UI scenarios for stable scroll-owner behavior in the settings panel.
+    fields:
+      consistent_scroll_owner_container:
+        type: implemented
+      no_scroll_container_role_churn_during_interactions:
+        type: implemented
+      overflow_wheel_behavior_owner_stability:
+        type: implemented
+dependencies:
+  - src/components/panels/SettingsPanel.tsx
+  - src/scroll/scrollRouting.ts
+  - src/scroll/scrollOwnershipDebug.ts
