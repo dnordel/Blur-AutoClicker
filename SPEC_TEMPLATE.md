@@ -31,8 +31,8 @@ Users can only configure mouse click actions from the GUI and cannot select scro
 - Scenario 6: Wheel events originating in nested vertically-scrollable descendants keep normal vertical behavior until that nested container reaches a boundary, after which parent horizontal routing may apply.
 - Scenario 7: Settings mode uses `.settings-panel` as the authoritative vertical scroller while `.panel-area` remains non-scrolling.
 - Scenario 8: Development builds expose per-container `data-scroll-owner` attributes and guarded wheel-routing logs to verify wheel-consumption ownership.
-- Scenario 9: Changing non-size settings (e.g., unrelated toggles) does not trigger the window resize effect.
+- Scenario 9 (explicit): Non-size settings changes (for example, theme/visibility toggles that do not alter panel dimensions) must not resize the window.
 - Scenario 10: Switching tabs, toggling explanation mode, or showing an update banner still triggers the expected resize transitions.
-- Scenario 11: Settings panel UI interactions (wheel and toggle clicks) preserve one stable scroll owner container, do not introduce `[role="scroll-container"]` churn, and remain stable when vertical overflow is present.
+- Scenario 11 (explicit): Settings panel scrolling remains stable without flicker during wheel/toggle interactions, preserves one scroll-owner container, does not introduce `[role="scroll-container"]` churn, and remains stable with vertical overflow.
 
 - Scenario 12: Contract drift check confirms `contracts/app.contract.yaml` declares current resize helper routines and resize trigger side effects covered by `tests/app-window-resize-behavior.test.tsx`.
